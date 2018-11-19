@@ -1,0 +1,36 @@
+Part 1: Vector Clocks
+
+Lamport's logical clocks ensure that we can identify "happens before" causal relationships.  They don't go so far as to identify which events might be causally concurrent.  Vector clocks can though!  Demonstrate this in a simple implementation that can run a few representative examples.  Use any language you like.
+
+What to hand in: Please provide a link to your code repository, which should include a short description of your implementation, and how your testing demonstrates how your Vector Clocks work!  Please be sure to include your tests.
+
+
+Part 2: Byzantine Generals
+
+The OM(m) algorithm described in the Byzantine Generals Problem is foundational in distributed systems.  Using the programming language of your choice, implement your own version of this algorithm, and provide a testing framework for your system.  
+
+The inputs to your algorithm can be in an input file or on the command line, and should include the following:
+
+    m: the level of recursion in the algorithm, and assume m > 0.
+    G: A list of n generals: G0,G1,G2,…,Gn, each of which is either loyal or a traitor. G0 is the commander, and the remaining n−1 generals are the lieutenants.
+    Oc: The order the commander gives to its lieutenants (Oc ∈ {ATTACK,RETREAT})
+
+If a general is loyal, and it has to relay an order O to general Gi, it always relays the value of O.
+If a general is a traitor, and it has to relay an order O to general Gi, it will relay the value of O if i is odd, and it will send the opposite of O if i is even. Note that, in the case of a traitorous commander general, the order being relayed is still just Oc.
+
+When performing a majority vote, only ATTACK and RETREAT votes are taken into account, and it is enough for one of the two to have a relative majority (i.e., a plurality) to determine what action wins the vote. If the number of ATTACK and RETREAT votes is the same, then the result of the vote is a tie.
+
+What to hand in: Please provide a link to your code repository, which should include a short description of your implementation, and how your testing demonstrates how your Byzantine Generals algorithm works!  Please be sure to include your tests.
+
+Part 3:  CAP or GPUs or TLA+ or... 
+
+This portion of the assignment is related to your project. The idea is that you should fire up some fundamental element of your project, and TEST IT OUT!!!
+
+For example, you might want to explore the CAP Theorem (FAQ) in a series of tests you design for any implementation, in any language, of either: (1) a consensus algorithm, or (2) a Distributed Hash Table (DHT).  In both cases, your implementation should handle get(key) and set(key, value) operations. Consensus algorithms demonstrate the "CP" side of CAP.  You could try out an implementation of Paxos, Multi-Paxos or Raft. You will find *many* of these online, and the idea will be to see if one of them might work well for your project idea!  DHTs are more about the "AP" of CAP.  Chord and Pastry are popular, but you can find others.
+
+If the CAP theorem is unrelated to your project because you are doing a deep dive into to something like GPU processing, that's COOL!  Focus on a sample GPU implementation that might get you started, and test it out.  In this case, instead of CAP, you might want to focus on performance metrics.  Sean's papers might help!
+
+You want to focus on something else entirely, such as testing or formal methods. In that case you might want to try out something like ChaosMonkey (NetFlix) or TLA+ (Lamport).
+
+What to hand in: Please provide a link to your code repository, which should include a short description of your implementation, and how your testing demonstrates how your component for your project works!  Please be sure to include your tests.
+
