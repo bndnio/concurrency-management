@@ -1,11 +1,11 @@
-Part 1: Vector Clocks
+Part 1: Vector Clocks [Due Nov 22nd]
 
 Lamport's logical clocks ensure that we can identify "happens before" causal relationships.  They don't go so far as to identify which events might be causally concurrent.  Vector clocks can though!  Demonstrate this in a simple implementation that can run a few representative examples.  Use any language you like.
 
 What to hand in: Please provide a link to your code repository, which should include a short description of your implementation, and how your testing demonstrates how your Vector Clocks work!  Please be sure to include your tests.
 
 
-Part 2: Byzantine Generals
+Part 2: Byzantine Generals [Due Nov 22nd]
 
 The OM(m) algorithm described in the Byzantine Generals Problem is foundational in distributed systems.  Using the programming language of your choice, implement your own version of this algorithm, and provide a testing framework for your system.  
 
@@ -22,7 +22,7 @@ When performing a majority vote, only ATTACK and RETREAT votes are taken into ac
 
 What to hand in: Please provide a link to your code repository, which should include a short description of your implementation, and how your testing demonstrates how your Byzantine Generals algorithm works!  Please be sure to include your tests.
 
-Part 3:  CAP or GPUs or TLA+ or... 
+Part 3:  CAP or GPUs or TLA+ or... [Due Nov 26th]
 
 This portion of the assignment is related to your project. The idea is that you should fire up some fundamental element of your project, and TEST IT OUT!!!
 
@@ -33,4 +33,3 @@ If the CAP theorem is unrelated to your project because you are doing a deep div
 You want to focus on something else entirely, such as testing or formal methods. In that case you might want to try out something like ChaosMonkey (NetFlix) or TLA+ (Lamport).
 
 What to hand in: Please provide a link to your code repository, which should include a short description of your implementation, and how your testing demonstrates how your component for your project works!  Please be sure to include your tests.
-
