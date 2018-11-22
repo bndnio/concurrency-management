@@ -15,34 +15,49 @@ class General {
     let id: Int
     let traitor: Bool
     let order: Order
-    let generals: Array<General>
-    var record: [Int: Order]
+    var records: [Int: Order]
     
-    init(_ id: Int, order: Order, traitor: Bool, generals: Array<General>) {
+    init(_ id: Int, order: Order, traitor: Bool) {
         self.id = id
         self.traitor = traitor
         self.order = order
-        self.generals = generals
-        self.record = [self.id: self.order]
+        self.records = [self.id: self.order]
     }
     
-    func distributeOrder() {
+    func distributeOrder(_ generals: Array<General>) {
         for general in generals {
-            shareOrder(general)
+            if self.id != general.id {
+                shareOrder(general)
+            }
         }
+        
+        var attack_count = 0
+        var retreat_count = 0
+        for (_, order) in records {
+            switch order {
+            case Order.ATTACK: attack_count += 1
+            case Order.RETREAT: retreat_count += 1
+            }
+        }
+        print("General \(self.id):: concensus \(attack_count > retreat_count ? Order.ATTACK : Order.RETREAT)")
     }
     
     func shareOrder(_ general: General) {
-        if general.id % 2 == 0 {
+        print("General \(self.id):: sharing order with \(general.id)")
+        if general.traitor == false || general.id % 2 == 0 {
             general.hearOrder(self.id, self.order)
         }
-        switch self.order {
-        case Order.ATTACK: general.hearOrder(self.id, Order.RETREAT)
-        case Order.RETREAT: general.hearOrder(self.id, Order.ATTACK)
+        else {
+            switch self.order {
+            case Order.ATTACK: general.hearOrder(self.id, Order.RETREAT)
+            case Order.RETREAT: general.hearOrder(self.id, Order.ATTACK)
+            }
         }
     }
     
     func hearOrder(_ tellId: Int, _ order: Order) {
-        record[tellId] = order
+        print("General \(self.id):: hearing order from \(tellId)")
+        records[tellId] = order
+        
     }
 }
