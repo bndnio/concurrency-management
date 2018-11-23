@@ -24,13 +24,7 @@ class General {
         self.records = [self.id: self.order]
     }
     
-    func distributeOrder(_ generals: Array<General>) {
-        for general in generals {
-            if self.id != general.id {
-                shareOrder(general)
-            }
-        }
-        
+    func vote() -> Order {
         var attack_count = 0
         var retreat_count = 0
         for (_, order) in records {
@@ -39,7 +33,24 @@ class General {
             case Order.RETREAT: retreat_count += 1
             }
         }
-        print("General \(self.id):: concensus \(attack_count > retreat_count ? Order.ATTACK : Order.RETREAT)")
+        print("General\(self.id):: [Attack \(attack_count), Retreat \(retreat_count)]")
+        if attack_count > retreat_count { return Order.ATTACK }
+        else if attack_count < retreat_count { return Order.RETREAT }
+        else { return Order.ATTACK }
+    }
+    
+    func distributeOrder(_ generals: Array<General>, m: Int) {
+        if m == 0 {
+            print("General\(self.id):: voting \(self.vote())")
+            return
+        }
+        
+        for general in generals {
+            if self.id != general.id {
+                shareOrder(general)
+            }
+        }
+        self.distributeOrder(generals, m: m-1)
     }
     
     func shareOrder(_ general: General) {
