@@ -33,8 +33,7 @@ Node2: ["2": 2, "1": 2]
 Where Node1 has seen two events: Initialize, and Send. 
 While Node 2 has seen two events as well: Initialize, and Recieve.
 
-To further this demonstration, observe the states in the following diagram:
-// TODO: Add Timeline diagram
+To further this demonstration, see the Execution Timeline in the Validation section:  
 
 To test my implementation, we will actually execute and inspect this timeline in the implementation. 
 We can then check at every point that the Vector Clocks are correct. 
@@ -62,6 +61,14 @@ A highlight of the VectorClock class is the compare function, as it implements a
 
 ## Validation
 
+Validation for this implementaion was done in fashions. 
+One, to verify that vector clocks are behaving in an appropriate way. 
+And two, to verify that relationships are being correctly determined.  
+
+Following the series of events on the Execution Timeline:  
+![Execution Timeline](./ExecutionTimeline.jpg)
 
 
-// TODO: Add Relationship State Machine diagram
+
+To otherwise represent the code in the `compare` function, see the Relationship State Machine diagram:  
+![Relationship FSM](./RelationFSM.jpg)
