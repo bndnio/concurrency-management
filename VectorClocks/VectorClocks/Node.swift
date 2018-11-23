@@ -6,6 +6,11 @@
 //  Copyright © 2018 Brendon Earl. All rights reserved.
 //
 
+struct Packet {
+    var vclk: VectorClock
+    let pl: Any
+}
+
 class Node {
     public let id: String
     let vclk: VectorClock
@@ -15,10 +20,14 @@ class Node {
         self.vclk = VectorClock(id)
     }
     
+    public func printCompare(_ onode: Node) {
+        self.vclk.printCompare(onode.vclk)
+    }
+    
     public func event() {
-        debugPrint("Node \(self.id):: Event Triggered")
+        print("Node \(self.id):: Event Triggered")
         self.vclk.increment()
-        debugPrint("Node \(self.id):: Event Clock: \(self.vclk)")
+        print("Node \(self.id):: Event Clock: \(self.vclk)")
     }
     
     public func startChain(_ chain: [Node]) {
@@ -26,18 +35,18 @@ class Node {
     }
     
     public func msgChain(_ pkt: Packet) {
-        debugPrint("Node \(self.id):: msgChain called")
+        print("Node \(self.id):: msgChain called")
         self.event()
-        debugPrint("Node \(self.id):: Vector Clock: \(self.vclk)")
+        print("Node \(self.id):: Vector Clock: \(self.vclk)")
         self.vclk.update(pkt.vclk)
-        debugPrint("Node \(self.id):: Merged Clock: \(self.vclk)")
+        print("Node \(self.id):: Merged Clock: \(self.vclk)")
         switch pkt.pl {
         case let pl as Array<Node>:
             if pl.count == 0 { return }
             self.event()
-            debugPrint("Node \(self.id):: Sender Clock: \(self.vclk)")
+            print("Node \(self.id):: Sender Clock: \(self.vclk)")
             let nextDest = pl[0]
-            debugPrint("Node \(self.id):: Triggering Node: \(nextDest.id)\n")
+            print("Node \(self.id):: Triggering Node: \(nextDest.id)\n")
             nextDest.msgChain(Packet(vclk: self.vclk, pl: Array(pl.dropFirst())))
         default:
             break
