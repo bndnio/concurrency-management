@@ -20,38 +20,41 @@ class Node: CustomStringConvertible {
         self.vclk = VectorClock(id)
     }
     
+    // String for print() call
     public var description: String {
         return "Node \(self.id): \(vclk.description)"
     }
     
+    // Print relation between self and another node
     func printCompare(_ onode: Node) {
         // print comparision
         print("Node \(self.id) is \(self.vclk.compare(onode.vclk)!) with Node \(onode.id)")
     }
     
+    // Mark event occurence
     func event() {
-        print("Node \(self.id):: Event Triggered")
         self.vclk.increment()
-        print("Node \(self.id):: Event Clock: \(self.vclk)")
     }
     
+    // Start chain of messages
     func startChain(_ chain: [Node]) {
         self.msgChain(Packet(vclk: self.vclk, pl: chain))
     }
     
+    // Execute chain of messages
     func msgChain(_ pkt: Packet) {
-        print("Node \(self.id):: msgChain called")
+        // Mark event and update vector clock
         self.event()
-        print("Node \(self.id):: Vector Clock: \(self.vclk)")
         self.vclk.update(pkt.vclk)
-        print("Node \(self.id):: Merged Clock: \(self.vclk)")
+        // Switch based on pl (payload) content
         switch pkt.pl {
         case let pl as Array<Node>:
+            // If payload empty, abort
             if pl.count == 0 { return }
+            // Otherwise mark event and mark next hop
             self.event()
-            print("Node \(self.id):: Sender Clock: \(self.vclk)")
             let nextDest = pl[0]
-            print("Node \(self.id):: Triggering Node: \(nextDest.id)\n")
+            // Execute msgChain on next hop, pass pl with dropped first element
             nextDest.msgChain(Packet(vclk: self.vclk, pl: Array(pl.dropFirst())))
         default:
             break
