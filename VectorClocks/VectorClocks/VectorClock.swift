@@ -19,7 +19,7 @@ class VectorClock: CustomStringConvertible {
     
     init(_ id: String) {
         self.id = id
-        self.clks = [self.id: 0]
+        self.clks = [self.id: 1]
     }
     
     public var description: String {
@@ -38,39 +38,38 @@ class VectorClock: CustomStringConvertible {
         }
     }
     
-    public func printCompare(_ ovclk: VectorClock) {
-        print("Node \(self.id) is \(compare(ovclk)!) with Node \(ovclk.id)")
-    }
-    
+    // Compare VectorClocks, return Relation
     public func compare(_ ovclk: VectorClock) -> Relation? {
         var relation: Relation?
         
+        // Get union of ids in both vector clocks
         func extractId (_ id: String, _: Int) -> String { return id }
         let ids: [String] = Array(Set(ovclk.clks.map(extractId) + self.clks.map(extractId)))
 
         for id in ids {
-            guard let myTime = self.clks[id] else {
-                relation = Relation.CONCURRENT
-                continue
-            }
-            guard let theirTime = ovclk.clks[id] else {
-                relation = Relation.CONCURRENT
-                continue
-            }
+            // get my and their time from vector clocks, defaults to 0
+            let myTime = self.clks[id] ?? 0
+            let theirTime = ovclk.clks[id] ?? 0
             
-            switch relation! {
-            case Relation.EQUAL:
+            if relation != nil {
+                // based on set relation, keep or transition relations based on condition
+                switch relation! {
+                case Relation.EQUAL:
+                    if myTime < theirTime { relation = Relation.HAPPENS_BEFORE }
+                    else if myTime > theirTime { relation = Relation.HAPPENS_AFTER }
+                case Relation.HAPPENS_BEFORE:
+                    if myTime > theirTime { relation = Relation.CONCURRENT }
+                case Relation.HAPPENS_AFTER:
+                    if myTime < theirTime { relation = Relation.CONCURRENT }
+                case Relation.CONCURRENT: continue
+                }
+            // if relation has not yet been set (first round)
+            } else {
+                // based on first value, declare what the relation looks like
                 if myTime < theirTime { relation = Relation.HAPPENS_BEFORE }
                 else if myTime > theirTime { relation = Relation.HAPPENS_AFTER }
-            case Relation.HAPPENS_BEFORE:
-                if myTime > theirTime { relation = Relation.CONCURRENT }
-            case Relation.HAPPENS_AFTER:
-                if myTime < theirTime { relation = Relation.HAPPENS_BEFORE }
-            case Relation.CONCURRENT: continue
-            default:
-                if myTime < theirTime { relation = Relation.HAPPENS_BEFORE }
-                else if myTime > theirTime { relation = Relation.HAPPENS_AFTER }
-                else { relation = Relation.EQUAL }
+                else if myTime == theirTime { relation = Relation.EQUAL }
+                else { relation = Relation.CONCURRENT }
             }
         }
         return relation
