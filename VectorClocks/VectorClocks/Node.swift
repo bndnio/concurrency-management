@@ -11,8 +11,8 @@ struct Packet {
     let pl: Any
 }
 
-class Node {
-    public let id: String
+class Node: CustomStringConvertible {
+    let id: String
     let vclk: VectorClock
     
     init(_ id: String) {
@@ -20,21 +20,26 @@ class Node {
         self.vclk = VectorClock(id)
     }
     
-    public func printCompare(_ onode: Node) {
-        self.vclk.printCompare(onode.vclk)
+    public var description: String {
+        return "Node \(self.id): \(vclk.description)"
     }
     
-    public func event() {
+    func printCompare(_ onode: Node) {
+        // print comparision
+        print("Node \(self.id) is \(self.vclk.compare(onode.vclk)!) with Node \(onode.id)")
+    }
+    
+    func event() {
         print("Node \(self.id):: Event Triggered")
         self.vclk.increment()
         print("Node \(self.id):: Event Clock: \(self.vclk)")
     }
     
-    public func startChain(_ chain: [Node]) {
+    func startChain(_ chain: [Node]) {
         self.msgChain(Packet(vclk: self.vclk, pl: chain))
     }
     
-    public func msgChain(_ pkt: Packet) {
+    func msgChain(_ pkt: Packet) {
         print("Node \(self.id):: msgChain called")
         self.event()
         print("Node \(self.id):: Vector Clock: \(self.vclk)")
