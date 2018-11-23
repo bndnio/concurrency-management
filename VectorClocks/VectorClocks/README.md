@@ -4,9 +4,9 @@
 
 First let's start with a quick background on Vector Clocks. 
 Vector clocks are a tool used in concurrent programming to assist with execution order and traceability. 
-At a high level, a Vector clock is a collection of Lamport Logical clocks, each are associated with a particular process (or here, Node). 
-When Nodes communicate, the send along their Vector Clock, so the receiving node can update theirs. 
-By looking any Node's Vector Clock and comparing it with another's at any moment it time, it can be determined if the have a "Concurrent", "Happens Before", "Happens After", or "Equal" relationship.
+At a high level, a Vector clock is a collection of Lamport Logical clocks, each are associated with a particular process (or here, node). 
+When nodes communicate, the send along their vector clock, so the receiving node can update theirs. 
+By looking any node's vector clock and comparing it with another's at any moment it time, it can be determined if the have a "Concurrent", "Happens Before", "Happens After", or "Equal" relationship.
 
 For demonstrational purposes, let's assume some details: 
 1. When a Node is initialized, it initialized it's own Vector Clock
@@ -41,12 +41,12 @@ Then, because each nodes' relationship can be determined based on a set of rules
 
 ## Implementation
 
-The implementation of the portion of the project was made relatively easy with the use of swift. 
-While this is my first time using the language and there of course a learning curve, the fact that it is strongly typed and compiled made for quick debugging. 
+The implementation of the portion of the project was made relatively easy with the use of Swift. 
+While this is my first time using the language and there is of course a learning curve, the fact that it is strongly typed and compiled made for quick debugging. 
 
 The code is broken into three chunks: main, Node, and VectorClocks.  
 
-The main file orchestrates the sample laid out above. 
+The main file orchestrates the execution timeline shown in the Validation section. 
 It creates nodes, triggers message sending and event occurances, and organizes the output of the program.  
 
 The Node file's main purpose is to declare the Node class. 
@@ -113,7 +113,7 @@ Evaluating every snapshot of each vector clock, we see:
 
 Therefore we can confirm that the vector clocks are behaving correctly at every instant on the execution timeline.
 
-Next, to validate the Relation compare function, we add vector clock saving to the logging code. 
+Next, to validate the relation compare function, we add vector clock saving to the logging code. 
 Running the following code:  
 ```
 vectorClocks["A"]!.printCompare(vectorClocks["B"]!)
