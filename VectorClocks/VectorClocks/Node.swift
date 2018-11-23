@@ -22,13 +22,13 @@ class Node: CustomStringConvertible {
     
     // String for print() call
     public var description: String {
-        return "Node \(self.id): \(vclk.description)"
+        return "Node\(self.id): \(vclk.description)"
     }
     
     // Print relation between self and another node
     func printCompare(_ onode: Node) {
         // print comparision
-        print("Node \(self.id) is \(self.vclk.compare(onode.vclk)!) with Node \(onode.id)")
+        print("Node\(self.id) is \(self.vclk.compare(onode.vclk)!) with Node\(onode.id)")
     }
     
     // Mark event occurence
@@ -38,26 +38,30 @@ class Node: CustomStringConvertible {
     
     // Start chain of messages
     func startChain(_ chain: [Node]) {
-        self.msgChain(Packet(vclk: self.vclk, pl: chain))
+        self.send(chain[0], Packet(vclk: self.vclk, pl: Array(chain.dropFirst())))
     }
     
-    // Execute chain of messages
-    func msgChain(_ pkt: Packet) {
+    // Recieve message with Packet
+    func msg(_ pkt: Packet) {
         // Mark event and update vector clock
         self.event()
         self.vclk.update(pkt.vclk)
-        // Switch based on pl (payload) content
         switch pkt.pl {
         case let pl as Array<Node>:
             // If payload empty, abort
             if pl.count == 0 { return }
-            // Otherwise mark event and mark next hop
-            self.event()
+            // Otherwise drop first pl element and trigger send to next hop
             let nextDest = pl[0]
-            // Execute msgChain on next hop, pass pl with dropped first element
-            nextDest.msgChain(Packet(vclk: self.vclk, pl: Array(pl.dropFirst())))
+            self.send(nextDest, Packet(vclk: self.vclk, pl: Array(pl.dropFirst())))
         default:
             break
         }
+    }
+    
+    // Send message with Packet
+    func send(_ nextDest: Node, _ pkt: Packet) {
+        // Mark event and and message
+        self.event()
+        nextDest.msg(pkt)
     }
 }
