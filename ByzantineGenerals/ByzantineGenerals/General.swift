@@ -14,61 +14,57 @@ enum Order {
 class General {
     let id: Int
     let traitor: Bool
-    let order: Order
-    var records: [Int: Order]
+    var records: [Order]?
     
-    init(_ id: Int, order: Order, traitor: Bool) {
+    init(_ id: Int, traitor: Bool) {
         self.id = id
         self.traitor = traitor
-        self.order = order
-        self.records = [self.id: self.order]
+    }
+
+    func hearOrder(_ order: Order, _ generals: Array<General>, m: Int, from: Int?) {
+        print("General\(self.id) :: hearing \(order) order from \(from ?? -1)")
+        if records != nil { records!.append(order) }
+        else { records = [order] }
+        
+        if m >= 0 {
+            self.distributeOrder(generals, m: m, from: from)
+        }
     }
     
-    func vote() -> Order {
+    func distributeOrder(_ generals: Array<General>, m: Int, from: Int?) {
+        for general in generals {
+            if self.id != general.id && from ?? -1 != general.id {
+                self.shareOrder(general, generals, m: m-1)
+            }
+        }
+    }
+    
+    func shareOrder(_ general: General, _ generals: Array<General>, m: Int) {
+        if self.traitor == true && (general.id+1) % 2 == 0 {
+            switch self.majority() {
+            case Order.ATTACK: general.hearOrder(Order.RETREAT, generals, m: m, from: self.id)
+            case Order.RETREAT: general.hearOrder(Order.ATTACK, generals, m: m, from: self.id)
+            }
+        }
+        else {
+            general.hearOrder(self.majority(), generals, m: m, from: self.id)
+        }
+    }
+    
+    func majority() -> Order {
         var attack_count = 0
         var retreat_count = 0
-        for (_, order) in records {
+        guard let records = self.records else {
+            return Order.RETREAT
+        }
+        for (order) in records {
             switch order {
             case Order.ATTACK: attack_count += 1
             case Order.RETREAT: retreat_count += 1
             }
         }
-        print("General\(self.id):: [Attack \(attack_count), Retreat \(retreat_count)]")
         if attack_count > retreat_count { return Order.ATTACK }
         else if attack_count < retreat_count { return Order.RETREAT }
-        else { return Order.ATTACK }
-    }
-    
-    func distributeOrder(_ generals: Array<General>, m: Int) {
-        if m == 0 {
-            print("General\(self.id):: voting \(self.vote())")
-            return
-        }
-        
-        for general in generals {
-            if self.id != general.id {
-                shareOrder(general)
-            }
-        }
-        self.distributeOrder(generals, m: m-1)
-    }
-    
-    func shareOrder(_ general: General) {
-        print("General \(self.id):: sharing order with \(general.id)")
-        if general.traitor == false || general.id % 2 == 0 {
-            general.hearOrder(self.id, self.order)
-        }
-        else {
-            switch self.order {
-            case Order.ATTACK: general.hearOrder(self.id, Order.RETREAT)
-            case Order.RETREAT: general.hearOrder(self.id, Order.ATTACK)
-            }
-        }
-    }
-    
-    func hearOrder(_ tellId: Int, _ order: Order) {
-        print("General \(self.id):: hearing order from \(tellId)")
-        records[tellId] = order
-        
+        else { return Order.RETREAT }
     }
 }
