@@ -10,7 +10,6 @@
 		96E27B6221A6269000458A15 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E27B6121A6269000458A15 /* main.swift */; };
 		96E27B6921A6276500458A15 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E27B6821A6276500458A15 /* Node.swift */; };
 		96E27B6B21A6284B00458A15 /* VectorClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E27B6A21A6284B00458A15 /* VectorClock.swift */; };
-		96E27B6D21A6285B00458A15 /* Packet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E27B6C21A6285B00458A15 /* Packet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -30,7 +29,7 @@
 		96E27B6121A6269000458A15 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		96E27B6821A6276500458A15 /* Node.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
 		96E27B6A21A6284B00458A15 /* VectorClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VectorClock.swift; sourceTree = "<group>"; };
-		96E27B6C21A6285B00458A15 /* Packet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Packet.swift; sourceTree = "<group>"; };
+		96E27B8521A78B5900458A15 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,7 +65,7 @@
 				96E27B6121A6269000458A15 /* main.swift */,
 				96E27B6821A6276500458A15 /* Node.swift */,
 				96E27B6A21A6284B00458A15 /* VectorClock.swift */,
-				96E27B6C21A6285B00458A15 /* Packet.swift */,
+				96E27B8521A78B5900458A15 /* README.md */,
 			);
 			path = VectorClocks;
 			sourceTree = "<group>";
@@ -131,7 +130,6 @@
 				96E27B6221A6269000458A15 /* main.swift in Sources */,
 				96E27B6B21A6284B00458A15 /* VectorClock.swift in Sources */,
 				96E27B6921A6276500458A15 /* Node.swift in Sources */,
-				96E27B6D21A6285B00458A15 /* Packet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

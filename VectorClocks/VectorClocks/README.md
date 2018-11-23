@@ -11,8 +11,8 @@ By looking any Node's Vector Clock and comparing it with another's at any moment
 For demonstartion purposes, let's assume some details: 
 1. When a Node is initialized, it initialized it's own Vector Clock
 2. When a Vector Clock is initialized, it contains only a single Logical Clock
-3. The Vector Clock then contains a Logical Clock which is associated to that Node through some unique identifier
-4. The Local Clock is incremented for every event (send, recieve, other)
+3. That Vector Clock then contains a Logical Clock which is associated to that Node through some unique identifier
+4. That Local Clock is incremented for every event (send, recieve, other) within the Vector Clock
 
 Lets say our system starts by initializing 3 nodes: Node1, Node2, and Node 3. 
 Each node then contains a Vector Clock with, which each contains a single Logical Clock for themselves. 
@@ -33,7 +33,7 @@ Node2: ["2": 2, "1": 2]
 Where Node1 has seen two events: Initialize, and Send. 
 While Node 2 has seen two events as well: Initialize, and Recieve.
 
-To further this demonstration, see the Execution Timeline in the Validation section:  
+As execution proceedes, clocks are increments on events, and each passes their vector clock to keep one-another "up-to-date"
 
 To test my implementation, we will actually execute and inspect this timeline in the implementation. 
 We can then check at every point that the Vector Clocks are correct. 
@@ -61,14 +61,88 @@ A highlight of the VectorClock class is the compare function, as it implements a
 
 ## Validation
 
-Validation for this implementaion was done in fashions. 
+Validation for this implementaion was done in two fashions. 
 One, to verify that vector clocks are behaving in an appropriate way. 
 And two, to verify that relationships are being correctly determined.  
 
 Following the series of events on the Execution Timeline:  
 ![Execution Timeline](./ExecutionTimeline.jpg)
 
+And by logging the states of each node at each inspection point:  
+```
+Inspection Point 1
+Node1: ["1": 2]
+Node2: ["2": 2, "1": 2]
+Node3: ["3": 1]
 
+Inspection Point 2
+Node1: ["1": 3]
+Node2: ["2": 3, "1": 2]
+Node3: ["3": 2, "2": 3, "1": 2]
+
+Inspection Point 3
+Node1: ["2": 4, "1": 4]
+Node2: ["3": 3, "2": 5, "1": 2]
+Node3: ["3": 3, "2": 3, "1": 2]
+
+Inspection Point 4
+Node1: ["2": 4, "1": 5]
+Node2: ["3": 3, "2": 5, "1": 2]
+Node3: ["3": 4, "2": 4, "1": 5]
+```
+
+We see that the nodes are behaving as expected in this instance. 
+
+Evaluating every snapshot of each vector clock, we see:  
+```
+(key: "A", value: ["1": 1])
+(key: "B", value: ["1": 2])
+(key: "C", value: ["1": 3])
+(key: "D", value: ["1": 4, "2": 4])
+(key: "E", value: ["1": 5, "2": 4])
+(key: "F", value: ["2": 1])
+(key: "G", value: ["1": 2, "2": 2])
+(key: "H", value: ["1": 2, "2": 3])
+(key: "I", value: ["1": 2, "2": 4])
+(key: "J", value: ["1": 2, "2": 5, "3": 3])
+(key: "K", value: ["3": 1])
+(key: "L", value: ["1": 2, "3": 2, "2": 3])
+(key: "M", value: ["1": 2, "3": 3, "2": 3])
+(key: "N", value: ["1": 5, "3": 4, "2": 4])
+```
+
+Therefore we can confirm that the vector clocks are behaving correctly at every instant on the execution timeline.
+
+Next, to validate the Relation compare function, we add vector clock saving to the logging code. 
+Running the following code:  
+```
+vectorClocks["A"]!.printCompare(vectorClocks["B"]!)
+vectorClocks["B"]!.printCompare(vectorClocks["A"]!)
+vectorClocks["A"]!.printCompare(vectorClocks["G"]!)
+vectorClocks["C"]!.printCompare(vectorClocks["H"]!)
+vectorClocks["A"]!.printCompare(vectorClocks["L"]!)
+vectorClocks["I"]!.printCompare(vectorClocks["M"]!)
+vectorClocks["J"]!.printCompare(vectorClocks["E"]!)
+vectorClocks["E"]!.printCompare(vectorClocks["L"]!)
+vectorClocks["A"]!.printCompare(vectorClocks["N"]!)
+```
+
+We get:  
+```
+Node1 is HAPPENS_BEFORE with Node1
+Node1 is HAPPENS_AFTER with Node1
+Node1 is HAPPENS_BEFORE with Node2
+Node1 is CONCURRENT with Node2
+Node1 is HAPPENS_BEFORE with Node3
+Node2 is CONCURRENT with Node3
+Node2 is CONCURRENT with Node1
+Node1 is CONCURRENT with Node3
+Node1 is HAPPENS_BEFORE with Node3
+```
+
+Which is just as we suspect!
 
 To otherwise represent the code in the `compare` function, see the Relationship State Machine diagram:  
 ![Relationship FSM](./RelationFSM.jpg)
+
+

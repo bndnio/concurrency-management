@@ -6,6 +6,8 @@
 //  Copyright © 2018 Brendon Earl. All rights reserved.
 //
 
+import Foundation
+
 enum Relation {
     case EQUAL
     case HAPPENS_BEFORE
@@ -25,6 +27,13 @@ class VectorClock: CustomStringConvertible {
     // String for print() call
     var description: String {
         return clks.description
+    }
+    
+    // Function for class deep copies
+    func copy(with zone: NSZone? = nil) -> VectorClock {
+        let copy = VectorClock(self.id)
+        copy.clks = self.clks
+        return copy
     }
     
     // Increment own logical clock in vector clock
@@ -76,5 +85,11 @@ class VectorClock: CustomStringConvertible {
             }
         }
         return relation
+    }
+    
+    // Print relation between self and another node
+    func printCompare(_ ovclk: VectorClock) {
+        // print comparision
+        print("Node\(self.id) is \(self.compare(ovclk)!) with Node\(ovclk.id)")
     }
 }
