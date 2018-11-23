@@ -3,12 +3,12 @@
 ##  Background
 
 First let's start with a quick background on Vector Clocks. 
-Vector clocks are a tool used in concurrent programming to assist with execution order and tracability. 
+Vector clocks are a tool used in concurrent programming to assist with execution order and traceability. 
 At a high level, a Vector clock is a collection of Lamport Logical clocks, each are associated with a particular process (or here, Node). 
-When Nodes communicate, the send along their Vector Clock, so the recieving node can update theirs. 
+When Nodes communicate, the send along their Vector Clock, so the receiving node can update theirs. 
 By looking any Node's Vector Clock and comparing it with another's at any moment it time, it can be determined if the have a "Concurrent", "Happens Before", "Happens After", or "Equal" relationship.
 
-For demonstartion purposes, let's assume some details: 
+For demonstrational purposes, let's assume some details: 
 1. When a Node is initialized, it initialized it's own Vector Clock
 2. When a Vector Clock is initialized, it contains only a single Logical Clock
 3. That Vector Clock then contains a Logical Clock which is associated to that Node through some unique identifier
@@ -31,9 +31,9 @@ Node2: ["2": 2, "1": 2]
 ```
 
 Where Node1 has seen two events: Initialize, and Send. 
-While Node 2 has seen two events as well: Initialize, and Recieve.
+While Node 2 has seen two events as well: Initialize, and Receive.
 
-As execution proceedes, clocks are increments on events, and each passes their vector clock to keep one-another "up-to-date"
+As execution proceeds, clocks are increments on events, and each passes their vector clock to keep one-another "up-to-date"
 
 To test my implementation, we will actually execute and inspect this timeline in the implementation. 
 We can then check at every point that the Vector Clocks are correct. 
@@ -41,7 +41,7 @@ Then, because each nodes' relationship can be determined based on a set of rules
 
 ## Implementation
 
-The implemention of the portion of the project was made relatively easy with the use of swift. 
+The implementation of the portion of the project was made relatively easy with the use of swift. 
 While this is my first time using the language and there of course a learning curve, the fact that it is strongly typed and compiled made for quick debugging. 
 
 The code is broken into three chunks: main, Node, and VectorClocks.  
@@ -51,7 +51,7 @@ It creates nodes, triggers message sending and event occurances, and organizes t
 
 The Node file's main purpose is to declare the Node class. 
 The Node class is a representation of a "Process" in many vector clock explanations. 
-The Node class is capable of printing it's state, comparing itself with another node, recieving an event trigger, and sending/recieving messages (and even message chains). 
+The Node class is capable of printing it's state, comparing itself with another node, receiving an event trigger, and sending/receiving messages (and even message chains). 
 
 The VectorClock is at the heart of this project, as it tackles implementing vector clocks, and providing functions to work with them. 
 In particular the VectorClock class maintains a collection of logical clocks, can compare itself against another vector clock, and can update itself based on another vector clock. 
@@ -61,7 +61,7 @@ A highlight of the VectorClock class is the compare function, as it implements a
 
 ## Validation
 
-Validation for this implementaion was done in two fashions. 
+Validation for this implementation was done in two fashions. 
 One, to verify that vector clocks are behaving in an appropriate way. 
 And two, to verify that relationships are being correctly determined.  
 

@@ -38,16 +38,85 @@ And the General file, which holds the General class.
 The General class has a few key methods. 
 `hearOrder` provides a method for other generals to communicate with that general. 
 An order must be passed along with an array of other generals, recursion levels left, and who id of who the order came from. 
-Most of these paramters are passed along to distribute order if the recrsion level left is greater than -1. 
+Most of these parameters are passed along to distribute order if the recursion level left is greater than -1. 
 While all that's left for `hearOrder` to do is record the order.  
 `distributeOrder` iterates through the list of generals and calls `shareOrder` with each of them if they are not themself or the general which passed the order to them most recently.  
-`shareOrder` determins what order to send to the general specified. 
-If the general sharing the order is a traitor, it will send it's majority order if the recieving general has an odd, otherwise it will send the opposite of their majority vote.  
+`shareOrder` determines what order to send to the general specified. 
+If the general sharing the order is a traitor, it will send it's majority order if the receiving general has an odd, otherwise it will send the opposite of their majority vote.  
 `majority` finds and returns the majority decision in that general's `record`. 
 
 ## Validation
 
-While I believe the algorithm is implemented correctly 
+While it appears the algorithm may be implemented when performing a static analysis. 
+Upon running tests, its apparent this implementation doesn't execute the command in layers as the algorithm guideline suggests. 
+
+With 4 generals, none of them being traitors, with _m_ = 0 gives us:  
+```
+General0 :: is first commander
+General0 :: [Attack: 1, Retreat: 0]
+General0 :: votes ATTACK
+General1 :: [Attack: 1, Retreat: 0]
+General1 :: votes ATTACK
+General2 :: [Attack: 1, Retreat: 0]
+General2 :: votes ATTACK
+General3 :: [Attack: 1, Retreat: 0]
+General3 :: votes ATTACK
+```
+
+So our base case execute correctly.  
+Setting _m_ = 1 then yields:  
+```
+General0 :: is first commander
+General0 :: [Attack: 3, Retreat: 0]
+General0 :: votes ATTACK
+General1 :: [Attack: 3, Retreat: 0]
+General1 :: votes ATTACK
+General2 :: [Attack: 1, Retreat: 0]
+General2 :: votes ATTACK
+General3 :: [Attack: 3, Retreat: 0]
+General3 :: votes ATTACK
+```
+
+Which again is correct. 
+
+Once we introduce a traitor who is not the first commander, we still see the correct result!  
+```
+General0 :: is first commander
+General2 :: Traitor: is traitor
+General0 :: [Attack: 1, Retreat: 0]
+General0 :: votes ATTACK
+General1 :: [Attack: 3, Retreat: 0]
+General1 :: votes ATTACK
+General2 :: [Attack: 3, Retreat: 0]
+General2 :: votes ATTACK
+General3 :: [Attack: 3, Retreat: 0]
+General3 :: votes ATTACK
+```
+
+It's only once they are set to the commander that we see the problem arrise:  
+```
+General2 :: Traitor: is traitor
+General2 :: is first commander
+General0 :: [Attack: 0, Retreat: 3]
+General0 :: votes RETREAT
+General1 :: [Attack: 1, Retreat: 2]
+General1 :: votes RETREAT
+General2 :: [Attack: 1, Retreat: 0]
+General2 :: votes ATTACK
+General3 :: [Attack: 1, Retreat: 2]
+General3 :: votes RETREAT
+```
+
+This is because the algorithm is meant for the OM(_m_) algorithm to run on the first commander. 
+Then OM(_m_-1) to run on all but the first commander, then OM(_m_-2) to run on all the commanders for each time they're called from the OM(_m_-1 algorithm). 
+Instead this implementation calls OM(_m_) on the first commander, then OM(_m_-1) on the first general the first general the commander calls, then OM(_m_-2) on all the other generals called by that most recently called general by the top level commander. 
+Once the bottom layer has full executed, the call stack then goes to the OM algorithm just above for the next general. 
+This means that the algorithm is going to be regularly called on nearly empty records because every generals's record will first filled with low id generals results. 
+
+To fix this, each layer needs to be completed before calling the next. 
+My tricky has been that I'm uncertain how to stop execution and resume when operating on a single-thread application in Swift. 
+
+In theory, 
 
 ## Biography
 
