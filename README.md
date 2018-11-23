@@ -1,8 +1,8 @@
-CSC 464 - Concurrency
-Prof. Yvonne Coady
-Assignment #2
+CSC 464 - Concurrency  
+Prof. Yvonne Coady  
+Assignment #2  
 
-Written by: Brendon Earl
+Written by: Brendon Earl  
 
 ---
 
