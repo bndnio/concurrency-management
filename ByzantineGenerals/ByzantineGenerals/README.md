@@ -116,8 +116,6 @@ This means that the algorithm is going to be regularly called on nearly empty re
 To fix this, each layer needs to be completed before calling the next. 
 My tricky has been that I'm uncertain how to stop execution and resume when operating on a single-thread application in Swift. 
 
-In theory, 
-
 ## Biography
 
 [1] L. Lamport et al., “The Byzantine Generals Problem ,” ACM Transactions on Programming Languages and Systems, July 1982, pp. 382-401. [Onlineserial]. Available: https://www.microsoft.com/en-us/research/uploads/prod/2016/12/The-Byzantine-Generals-Problem.pdf. [Accessed Nov. 22, 2018].
