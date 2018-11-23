@@ -6,6 +6,13 @@
 //  Copyright © 2018 Brendon Earl. All rights reserved.
 //
 
+enum Relation {
+    case EQUAL
+    case HAPPENS_BEFORE
+    case HAPPENS_AFTER
+    case CONCURRENT
+}
+
 class VectorClock: CustomStringConvertible {
     let id: String
     var clks: [String: Int]
@@ -29,5 +36,43 @@ class VectorClock: CustomStringConvertible {
                 self.clks[id] = clk
             }
         }
+    }
+    
+    public func printCompare(_ ovclk: VectorClock) {
+        print("Node \(self.id) is \(compare(ovclk)!) with Node \(ovclk.id)")
+    }
+    
+    public func compare(_ ovclk: VectorClock) -> Relation? {
+        var relation: Relation?
+        
+        func extractId (_ id: String, _: Int) -> String { return id }
+        let ids: [String] = Array(Set(ovclk.clks.map(extractId) + self.clks.map(extractId)))
+
+        for id in ids {
+            guard let myTime = self.clks[id] else {
+                relation = Relation.CONCURRENT
+                continue
+            }
+            guard let theirTime = ovclk.clks[id] else {
+                relation = Relation.CONCURRENT
+                continue
+            }
+            
+            switch relation! {
+            case Relation.EQUAL:
+                if myTime < theirTime { relation = Relation.HAPPENS_BEFORE }
+                else if myTime > theirTime { relation = Relation.HAPPENS_AFTER }
+            case Relation.HAPPENS_BEFORE:
+                if myTime > theirTime { relation = Relation.CONCURRENT }
+            case Relation.HAPPENS_AFTER:
+                if myTime < theirTime { relation = Relation.HAPPENS_BEFORE }
+            case Relation.CONCURRENT: continue
+            default:
+                if myTime < theirTime { relation = Relation.HAPPENS_BEFORE }
+                else if myTime > theirTime { relation = Relation.HAPPENS_AFTER }
+                else { relation = Relation.EQUAL }
+            }
+        }
+        return relation
     }
 }
