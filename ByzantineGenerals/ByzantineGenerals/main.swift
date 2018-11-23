@@ -14,9 +14,19 @@ for i in 0..<4 {
     generals.append(General(i, traitor: isTraitor))
 }
 
+let commanderId = 2
 generals[2].hearOrder(Order.ATTACK, generals, m: 1, from: nil)
 
 print()
 for general in generals {
-    print("Genearl\(general.id) :: votes \(general.majority())")
+    if general.traitor == true {
+        print("General\(general.id) :: Traitor: is traitor")
+    }
+    if general.id == commanderId {
+        print("General\(general.id) :: is first commander")
+    }
+    
+}
+for general in generals {
+    print("General\(general.id) :: votes \(general.majority())")
 }
