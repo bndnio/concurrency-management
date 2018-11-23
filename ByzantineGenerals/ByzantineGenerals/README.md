@@ -27,7 +27,7 @@ For Algorithm OM(_m_), _m_ > 0
 3. For each _i_, and each _j_ =/= _i_, let _vj_ be the value Lieutenant _i_ received from Lieutenant _j_ in step (2) (using Algorithm OM(_m_-1)), or else RETREAT if he received no such value. Lieutenant _i_ uses the value _majority_(_v1_, ..., _v(n-1)_).
 
 In practical terms, it means that for any 3_m_+1 generals, there may only be as many as _m_ traitors, and requries _m_ levels of recursion.  
-A level of recursion can be describing as a round of every other general telling every other general (except the one that told them) their majority from that round. 
+A level of recursion can be described as a round of every general telling every other general (except the one that told them) their majority from the previous level of recursion's round. 
 
 ## Implementation
 
@@ -42,7 +42,7 @@ Most of these parameters are passed along to distribute order if the recursion l
 While all that's left for `hearOrder` to do is record the order.  
 `distributeOrder` iterates through the list of generals and calls `shareOrder` with each of them if they are not themself or the general which passed the order to them most recently.  
 `shareOrder` determines what order to send to the general specified. 
-If the general sharing the order is a traitor, it will send it's majority order if the receiving general has an odd, otherwise it will send the opposite of their majority vote.  
+If the general sharing the order is a traitor, it will send it's majority order if the receiving general has an odd id, otherwise it will send the opposite of it's majority vote.  
 `majority` finds and returns the majority decision in that general's `record`. 
 
 ## Validation
@@ -93,7 +93,7 @@ General3 :: [Attack: 3, Retreat: 0]
 General3 :: votes ATTACK
 ```
 
-It's only once they are set to the commander that we see the problem arrise:  
+It's only once they are set the traitor to the commander that we see the problem arrise:  
 ```
 General2 :: Traitor: is traitor
 General2 :: is first commander
@@ -108,13 +108,13 @@ General3 :: votes RETREAT
 ```
 
 This is because the algorithm is meant for the OM(_m_) algorithm to run on the first commander. 
-Then OM(_m_-1) to run on all but the first commander, then OM(_m_-2) to run on all the commanders for each time they're called from the OM(_m_-1 algorithm). 
-Instead this implementation calls OM(_m_) on the first commander, then OM(_m_-1) on the first general the first general the commander calls, then OM(_m_-2) on all the other generals called by that most recently called general by the top level commander. 
+Then OM(_m_-1) to run on all but the first commander, then OM(_m_-2) to run on all the commanders for each time they're called from the OM(_m_-1 algorithm), and so on until OM(0) is reached. 
+Instead, this implementation calls OM(_m_) on the first commander, then OM(_m_-1) on the first general the first commander calls, then OM(_m_-2) on all the other generals called by that most recently called general by the top level commander. 
 Once the bottom layer has full executed, the call stack then goes to the OM algorithm just above for the next general. 
-This means that the algorithm is going to be regularly called on nearly empty records because every generals's record will first filled with low id generals results. 
+This means that the algorithm is going to be regularly called on nearly empty records because every generals's record will first filled with the lower id'ed generals results. 
 
 To fix this, each layer needs to be completed before calling the next. 
-My tricky has been that I'm uncertain how to stop execution and resume when operating on a single-thread application in Swift. 
+My tricky has been that I'm uncertain how to stop execution and resume when operating on a single-thread application in Swift to fasciliate a breadth-first traversal as is needed. 
 
 ## Biography
 
